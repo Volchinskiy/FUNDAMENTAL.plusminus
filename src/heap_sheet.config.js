@@ -47,7 +47,7 @@ var heapSheetConfig = (name, row) => ({
   formulas: [
     {
       range: [3, 3],
-      formula: `=${functions.mainCountingFunction}("${name}"; F3:J202; L3:P202; ${sheetNames.settings}!B${row}:E${row})`,
+      formula: `=${functions.mainCountingFunction}("${name}"; F3; K3; ${sheetNames.settings}!B${row}:E${row})`,
     },
     {
       range: [3, 6],
