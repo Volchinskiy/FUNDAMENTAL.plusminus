@@ -1,5 +1,6 @@
 function onOpen() {
   F_INIT_UI();
+  AS.setName("FUNDAMENTAL.plus_minus_v5");
 }
 
 function F_INIT_UI() {
