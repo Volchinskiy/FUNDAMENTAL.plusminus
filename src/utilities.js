@@ -6,7 +6,7 @@
  * @returns The Hexadecimal value of the cell's background color.
  * @customfunction
  */
-function F_GETBG(row, column) {
+function F_GET_BG(row, column) {
   const background = SpreadsheetApp.getActive()
     .getDataRange()
     .getCell(row, column)
@@ -63,15 +63,34 @@ function F_GET_RESULT_DATA(heapName) {
   return [[result, subHeapsResult.join(" | ")]];
 }
 
-const maybeAddZero = (a) => (a < 10 ? `0${a}` : `${a}`);
-const getDate = (date) => {
+function maybeAddZero(a) {
+  return a < 10 ? `0${a}` : `${a}`;
+}
+function getDate(date) {
   date.setHours(date.getHours() + 7);
   const day = maybeAddZero(date.getUTCDate());
   const month = maybeAddZero(date.getMonth() + 1);
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
-};
-const todayDate = () => {
+}
+function todayDate() {
   const today = new Date();
   return getDate(today);
-};
+}
+
+function getAS(idOrUrl) {
+  const AS = SpreadsheetApp.getActiveSpreadsheet();
+  if (AS) return AS;
+  try {
+    return SpreadsheetApp.openById(idOrUrl);
+  } catch {
+    return SpreadsheetApp.openByUrl(idOrUrl);
+  }
+}
+
+function sum(name) {
+  return (acc, row) => {
+    if (row[1] === name) return acc + row[0];
+    return acc;
+  };
+}
