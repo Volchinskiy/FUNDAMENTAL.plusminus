@@ -1,3 +1,9 @@
+/**
+ * One Object that know about all definition in this application.
+ * Style variables, user functions names, sheet style patterns and much other.
+ * It needs because I think that if i have these definitions in different files.
+ * I'll get many problems with application development.
+ */
 const globalDefinitions = {
   styleVariables: {
     greenLight: "#bfffa2",
