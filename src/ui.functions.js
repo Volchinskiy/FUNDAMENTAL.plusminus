@@ -1,4 +1,5 @@
 function onOpen() {
+  const { AS } = globalDefinitions;
   F_INIT_UI();
   AS.setName("FUNDAMENTAL.plus_minus_v5");
 }

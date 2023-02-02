@@ -22,7 +22,7 @@ const globalDefinitions = {
   functionNames: {
     initHeap: "F_INIT_HEAP",
     filter: "F_FILTER",
-    getResultData: "F_GET_RESULT_DATA",
+    getResultData: "F_GET_HEAP_COUNTS_RESULT",
     mainCountingFunction: "F_MAIN_COUNTING_FUNCTION",
     initBasisSheets: "F_INIT_BASIS_SHEETS",
     initHeapSheets: "F_INIT_HEAP_SHEETS",
@@ -33,7 +33,7 @@ const globalDefinitions = {
     entryPoint: "entry_point",
     saveCounts: "save_counts",
     saveOperations: "save_operations",
-    heapName: (name) => `${name}_heap`,
+    getHeapName: (name) => `${name}_heap`,
   },
   sheetPatterns: {
     general: {
@@ -60,6 +60,7 @@ const globalDefinitions = {
   },
   defaultTikers: ["no", "merge", "p", "m"],
   AS: getAS(),
+  contentPaddingTop: 2,
 };
 
 globalDefinitions.sheetPatterns.entryPointSheetWidths = [
@@ -80,32 +81,3 @@ globalDefinitions.sheetPatterns.heapSheetFirsRows = [
   { column: 4, value: globalDefinitions.styleVariables.widthLittlest },
   { column: 5, value: globalDefinitions.styleVariables.widthLittlest },
 ];
-
-// const tikers = [
-//   [
-//     {
-//       name: "prog",
-//       description: "Resources, That I Get Due To Programing.",
-//       func: sum("prog"),
-//       range: "plus",
-//     },
-//     {
-//       name: "ttt",
-//       description: "Resources That I Get Due To Tattoo.",
-//       func: sum("ttt"),
-//       range: "plus",
-//     },
-//     {
-//       name: "cns",
-//       description: "Could Not Spend.",
-//       func: sum("cns"),
-//       range: "minus",
-//     },
-//   ],
-//   [
-//     {
-//       name: "no",
-//       description: "Doesn't Go Through The Cycle Of Division By Sub Heaps.",
-//     },
-//   ],
-// ];

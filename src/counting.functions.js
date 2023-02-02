@@ -1,7 +1,6 @@
 const add = (acc, row) => (row[0] ? acc + row[0] : acc);
 
-function F_MAIN_COUNTING_FUNCTION(name, _plusRange, _minusRange, _settings) {
-  // NEED TO DELETE
+function F_MAIN_COUNTING_FUNCTION(name) {
   const settingsSheet = AS.getSheetByName(sheetNames.settings);
   const initData = settingsSheet
     .getRange(3, 2, settingsSheet.getLastRow() - 2, 3)

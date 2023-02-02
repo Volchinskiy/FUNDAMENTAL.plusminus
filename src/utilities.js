@@ -1,66 +1,84 @@
 /**
  * Returns the Hexadecimal value of a cell's background color.
  *
+ * @param {string} sheetName The sheet's name.
  * @param {number} row The cell's row number.
  * @param {number} column The cell's column number.
  * @returns The Hexadecimal value of the cell's background color.
  * @customfunction
  */
-function F_GET_BG(row, column) {
-  const background = SpreadsheetApp.getActive()
-    .getDataRange()
-    .getCell(row, column)
-    .getBackground();
-  return background;
+function getBg(sheetName, row, column) {
+  return globalDefinitions.AS.getSheetByName(sheetName).getRange(row, column).getBackground();
 }
 
-function F_INIT_HEAP(name, init, underHeaps, color) {
-  return [[name, init, underHeaps, color]];
+/**
+ * Use this function for init money heap sheet.
+ *
+ * @param {string} name The name of heap that help you distinguish heaps from others.
+ * @param {number} init The init value (count of all money that now you have).
+ * @param {string} subHeaps The heaps in which you will add the percentage of the general plus.
+ * @param {string} color The color of heap that help you distinguish heaps from others.
+ * @returns Matrix that fills needed cells.
+ * @customfunction
+ */
+function F_INIT_HEAP(name, init, subHeaps, color) {
+  return [[name, init, subHeaps, color]];
 }
 
+/**
+ * Custom filter function that extend google sheet filter function.
+ * It gets all data from entry_point, filter and carrie to heap sheet.
+ *
+ * @param {*} heapName The name of heap that help you distinguish heaps from others.
+ * @param {*} type The type of operation plus or minus
+ * @returns Matrix that fills needed cells.
+ * @customfunction
+ */
 function F_FILTER(heapName, type) {
-  const sheet = AS.getSheetByName(sheetNames.entryPoint);
-  const lastRowWithDate = sheet.getLastRow() - 2 ? sheet.getLastRow() : 1;
-  const allData = sheet.getRange(3, 2, lastRowWithDate, 6).getValues();
-  const filterData = allData.filter((row) => {
-    const [_, rowType, rowHeapName] = row;
-    if (rowHeapName === heapName && rowType === type) return true;
-    return false;
+  const { AS, contentPaddingTop, sheetNames: { entryPoint } } = globalDefinitions;
+  const entryPointSheet = AS.getSheetByName(entryPoint);
+  const rows = entryPointSheet.getLastRow() - contentPaddingTop || 1;
+  const operations = entryPointSheet.getRange(3, 2, rows, 6).getValues();
+  const filteredOperations = operations.filter(
+    ([_, operationType, operationHeapName]) => (operationHeapName === heapName && operationType === type)
+  );
+  const preparedOperations = filteredOperations.map((operation  ) => {
+    // in this function you need to use projection
+    const [date, _, __, value, tikers, comment] = operation;
+    return [date, value, tikers, comment];
   });
-  const preparedData = filterData.map((row) => {
-    const [date, _, __, value, tiker, comment] = row;
-    return [date, value, tiker, comment];
-  });
-  return preparedData;
+  return preparedOperations;
 }
 
-function F_GET_RESULT_DATA(heapName) {
-  const sheet = AS.getSheetByName(sheetNames.heapName(heapName));
-  const defaultRows = 5;
-
-  const settingsSheet = AS.getSheetByName(sheetNames.settings);
-  const subHeaps = settingsSheet
-    .getRange(3, 2, settingsSheet.getLastRow() - 2, 3)
+/**
+ * Function that show you results of your heap.
+ *
+ * @param {string} heapName The name of heap that help you distinguish heaps from others.
+ * @returns Matrix that fills needed cells.
+ * @customfunction
+ */
+function F_GET_HEAP_COUNTS_RESULT(heapName) {
+  const { AS, sheetNames: { settings, getHeapName }, contentPaddingTop } = globalDefinitions;
+  const heapSheet = AS.getSheetByName(getHeapName(heapName));
+  const settingsSheet = AS.getSheetByName(settings);
+  const rows = 5;
+  const heapSubHeaps = settingsSheet
+    .getRange(3, 2, settingsSheet.getLastRow() - contentPaddingTop, 3)
     .getValues()
     .filter((value) => value[0] === heapName)[0][2];
-
-  const subHeapsAmount = subHeaps.split("|")[0].length
-    ? subHeaps.split("|").length
-    : 0;
-  const data = sheet
-    .getRange(4, 3, defaultRows + subHeapsAmount * 3, 1)
-    .getValues();
-  const result = data[0][0].split(" | ")[2];
-  const subHeapsResult = [];
-
-  for (let i = 5; i < data.length; i += 3) {
-    const subHeapHeader = data[i][0];
-    const subHeapResults = data[i + 1][0];
+  const subHeaps = heapSubHeaps.split("|");
+  const subHeapsAmount = subHeaps[0].length ? subHeaps.length : 0;
+  const mainCountResult = heapSheet.getRange(4, 3, rows + subHeapsAmount * 3, 1).getValues();
+  const heapResult = mainCountResult[0][0].split(" | ")[2];
+  const subHeapsResults = [];
+  for (let i = 5; i < mainCountResult.length; i += 3) {
+    const subHeapHeader = mainCountResult[i][0];
+    const subHeapCounts = mainCountResult[i + 1][0];
     const subHeapName = subHeapHeader.split(" | ")[0];
-    const subHeapResult = subHeapResults.split(" | ")[2];
-    subHeapsResult.push(`${subHeapName} ${subHeapResult}`);
+    const subHeapResult = subHeapCounts.split(" | ")[2];
+    subHeapsResults.push(`${subHeapName} ${subHeapResult}`);
   }
-  return [[result, subHeapsResult.join(" | ")]];
+  return [[heapResult, subHeapsResults.join(" | ")]];
 }
 
 function maybeAddZero(a) {
@@ -78,14 +96,17 @@ function todayDate() {
   return getDate(today);
 }
 
+/**
+ * Function that return ActiveSpreadsheet.
+ *
+ * @param {string} idOrUrl Spreadsheet ID or URL.
+ * @returns {Spreadsheet}
+ */
 function getAS(idOrUrl) {
   const AS = SpreadsheetApp.getActiveSpreadsheet();
   if (AS) return AS;
-  try {
-    return SpreadsheetApp.openById(idOrUrl);
-  } catch {
-    return SpreadsheetApp.openByUrl(idOrUrl);
-  }
+  try { return SpreadsheetApp.openById(idOrUrl) }
+  catch { return SpreadsheetApp.openByUrl(idOrUrl) }
 }
 
 function sum(name) {
