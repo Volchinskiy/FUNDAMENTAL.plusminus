@@ -60,6 +60,7 @@ const globalDefinitions = {
   },
   defaultTikers: ["no", "merge", "p", "m"],
   AS: getAS(),
+  UI: SpreadsheetApp.getUi(),
   contentPaddingTop: 2,
 };
 

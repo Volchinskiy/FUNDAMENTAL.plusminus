@@ -1,15 +1,22 @@
+/**
+ * Function that runs when user open application.
+ * It runs function that adds custom menu button.
+ * And changes sheet name.
+ */
 function onOpen() {
   const { AS } = globalDefinitions;
-  F_INIT_UI();
+  initUiMenu();
   AS.setName("FUNDAMENTAL.plus_minus_v5");
 }
 
-function F_INIT_UI() {
-  const ui = SpreadsheetApp.getUi();
-  ui.createMenu("F_SCRIPTS")
+/**
+ * Function that adds custom menu button.
+ */
+function initUiMenu() {
+  const { UI } = globalDefinitions;
+  UI.createMenu("F_plus_minus")
     .addSubMenu(
-      ui
-        .createMenu("Init Sheets")
+      UI.createMenu("Init Sheets")
         .addItem("Basis Sheets", functions.initBasisSheets)
         .addItem("Heap Sheets", functions.initHeapSheets)
     )
@@ -17,18 +24,18 @@ function F_INIT_UI() {
     .addToUi();
 }
 
+/**
+ * Function that we can use to add confirm and alert modal screens.
+ */
 function F_CONFIRM() {
-  var ui = SpreadsheetApp.getUi();
+  const { UI } = globalDefinitions;
 
-  var result = ui.alert(
+  var result = UI.alert(
     "Please confirm",
     "Are you sure you want to continue?",
-    ui.ButtonSet.YES_NO
+    UI.ButtonSet.YES_NO
   );
 
-  if (result == ui.Button.YES) {
-    ui.alert("Confirmation received.");
-  } else {
-    ui.alert("Permission denied.");
-  }
+  if (result === UI.Button.YES) UI.alert("Confirmation received.");
+  else UI.alert("Permission denied.");
 }
