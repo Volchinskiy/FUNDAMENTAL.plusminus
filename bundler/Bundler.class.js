@@ -8,17 +8,15 @@
     FOLDER = "src";
     FILE_NAMES_SEQUENCE = [
       "global_definitions",
-      "utilities",
-      "ui.functions",
-      "init_sheet.functions",
+      "selectors",
+      "sheet_config.class",
+      "sheet_creator.class",
+      "sheets_configs.config",
+      "init_sheets.functions",
+      "custom_user.functions",
+      "data_saver.class",
       "save_data.functions",
-      "create_sheet.class",
-      "counting.functions",
-      "entry_point_sheet.config",
-      "settings_sheet.config",
-      "heap_sheet.config",
-      "save_counts_sheet.config",
-      "save_operations_sheet.config",
+      "utilities",
     ];
     BUNDLE_NAME = "application.js";
 

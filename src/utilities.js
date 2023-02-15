@@ -1,96 +1,32 @@
 /**
- * Returns the Hexadecimal value of a cell's background color.
- *
- * @param {number} row The cell's row number.
- * @param {number} column The cell's column number.
- * @returns The Hexadecimal value of the cell's background color.
- * @customfunction
+ * Returns ActiveSpreadsheet.
  */
-function F_GET_BG(row, column) {
-  const background = SpreadsheetApp.getActive()
-    .getDataRange()
-    .getCell(row, column)
-    .getBackground();
-  return background;
+function initAS(idOrUrl) {
+  var AS = SpreadsheetApp.getActiveSpreadsheet()
+  if (AS) return AS
+  try { return SpreadsheetApp.openById(idOrUrl) }
+  catch { return SpreadsheetApp.openByUrl(idOrUrl) }
 }
 
-function F_INIT_HEAP(name, init, underHeaps, color) {
-  return [[name, init, underHeaps, color]];
+/**
+ * Returns string look like this => 01.01.1970
+ */
+function getReadableDate(date) {
+  var maybeAddZero = (number) => number < 10 ? `0${number}` : `${number}`
+  var day = maybeAddZero(date.getDate())
+  var month = maybeAddZero(date.getMonth() + 1)
+  var year = date.getFullYear()
+  return `${day}.${month}.${year}`
 }
 
-function F_FILTER(heapName, type) {
-  const sheet = AS.getSheetByName(sheetNames.entryPoint);
-  const lastRowWithDate = sheet.getLastRow() - 2 ? sheet.getLastRow() : 1;
-  const allData = sheet.getRange(3, 2, lastRowWithDate, 6).getValues();
-  const filterData = allData.filter((row) => {
-    const [_, rowType, rowHeapName] = row;
-    if (rowHeapName === heapName && rowType === type) return true;
-    return false;
-  });
-  const preparedData = filterData.map((row) => {
-    const [date, _, __, value, tiker, comment] = row;
-    return [date, value, tiker, comment];
-  });
-  return preparedData;
-}
-
-function F_GET_RESULT_DATA(heapName) {
-  const sheet = AS.getSheetByName(sheetNames.heapName(heapName));
-  const defaultRows = 5;
-
-  const settingsSheet = AS.getSheetByName(sheetNames.settings);
-  const subHeaps = settingsSheet
-    .getRange(3, 2, settingsSheet.getLastRow() - 2, 3)
+/**
+ * Returns matrix of init values.
+ */
+function getInitData () {
+  var settingsSheet = getAS().getSheetByName(getSheetName("settings"))
+  return settingsSheet
+    .getRange(3, 2, settingsSheet.getLastRow() - getTopPadding(), 4)
     .getValues()
-    .filter((value) => value[0] === heapName)[0][2];
-
-  const subHeapsAmount = subHeaps.split("|")[0].length
-    ? subHeaps.split("|").length
-    : 0;
-  const data = sheet
-    .getRange(4, 3, defaultRows + subHeapsAmount * 3, 1)
-    .getValues();
-  const result = data[0][0].split(" | ")[2];
-  const subHeapsResult = [];
-
-  for (let i = 5; i < data.length; i += 3) {
-    const subHeapHeader = data[i][0];
-    const subHeapResults = data[i + 1][0];
-    const subHeapName = subHeapHeader.split(" | ")[0];
-    const subHeapResult = subHeapResults.split(" | ")[2];
-    subHeapsResult.push(`${subHeapName} ${subHeapResult}`);
-  }
-  return [[result, subHeapsResult.join(" | ")]];
 }
 
-function maybeAddZero(a) {
-  return a < 10 ? `0${a}` : `${a}`;
-}
-function getDate(date) {
-  date.setHours(date.getHours() + 7);
-  const day = maybeAddZero(date.getUTCDate());
-  const month = maybeAddZero(date.getMonth() + 1);
-  const year = date.getFullYear();
-  return `${day}.${month}.${year}`;
-}
-function todayDate() {
-  const today = new Date();
-  return getDate(today);
-}
-
-function getAS(idOrUrl) {
-  const AS = SpreadsheetApp.getActiveSpreadsheet();
-  if (AS) return AS;
-  try {
-    return SpreadsheetApp.openById(idOrUrl);
-  } catch {
-    return SpreadsheetApp.openByUrl(idOrUrl);
-  }
-}
-
-function sum(name) {
-  return (acc, row) => {
-    if (row[1] === name) return acc + row[0];
-    return acc;
-  };
-}
+function onOpen() { getAS().setName("FUNDAMENTAL.plus_minus_v6") }
