@@ -9,12 +9,11 @@ function initBasisSheets() {
   sheetCreator.create(saveOperationsSheetConfig)
   sheetCreator.create(saveSortedOperationsSheetConfig)
 }
-
 /**
  * Function that create Heap Sheets.
  */
 function createHeapSheets () {
-  var initData = getInitData()
+  var initData = GD.initData
   for (var i = 0; i < initData.length; i++) {
     var [name, _, __, mixins] = initData[i]
     if (!name) continue
@@ -24,8 +23,8 @@ function createHeapSheets () {
     var sheetCreator = new SheetCreator()
     var sheetConfig = heapSheetConfig(name, settingsSheetRow, plusFilterFormula, minusFilterFormula)
     sheetCreator.create(sheetConfig)
-    var heapName = getSheetName("getHeapName")(name)
-    getSheet("settingsSheet")
+    var heapName = GD.sheetNames.getHeapName(name)
+    GD.sheets.settingsSheet
       .getRange(settingsSheetRow, 4)
       .setFormula(`=TRIM(RIGHT(SUBSTITUTE(${heapName}!B6," ",REPT(" ", LEN(${heapName}!B6))), LEN(${heapName}!B6)))`)
   }
@@ -35,8 +34,8 @@ function createHeapSheets () {
  * Function that returns plus filter formula that can includes mixfrom operations.
  */
 function getPlusFilterFormula (name, initData) {
-  var plusFilter = getFormula("defaultFilterFormula")(name, "p")
-  var plusFilterPlug = getFormula("noDataPlug")(plusFilter)
+  var plusFilter = GD.formulas.defaultFilterFormula(name, "p")
+  var plusFilterPlug = GD.formulas.ifErrorPlug(plusFilter)
   var mixinsFrom = initData.reduce((acc, row) => {
     var [rowName, _, __, mixins] = row
     if (!mixins.includes(name)) return acc
@@ -51,15 +50,15 @@ function getPlusFilterFormula (name, initData) {
  * Function that adds mixfrom operation to plus Filter.
  */
 function mixFromMapper (mixinsFrom) {
-  return mixinsFrom.map(([name, percent]) => getFormula("mixFrom")(name, percent)).join(";")
+  return mixinsFrom.map(([name, percent]) => GD.formulas.mixFrom(name, percent)).join(";")
 }
 
 /**
  * Function that returns minus filter formula that can includes mixto operations.
  */
 function getMinusFilterFormula (name, heapMixins) {
-  var minusFilter = getFormula("defaultFilterFormula")(name, "m")
-  var minusFilterPlug = getFormula("noDataPlug")(minusFilter)
+  var minusFilter = GD.formulas.defaultFilterFormula(name, "m")
+  var minusFilterPlug = GD.formulas.ifErrorPlug(minusFilter)
   if(!heapMixins) return `=${minusFilterPlug}`
   var mixinsTo = heapMixins.split(',').map((string) => string.trim().split(" "))
   return `={${minusFilterPlug}; ${mixToMapper(mixinsTo)}}`
@@ -69,5 +68,5 @@ function getMinusFilterFormula (name, heapMixins) {
  * Function that adds mixto operation to minus Filter.
  */
 function mixToMapper (mixinsTo) {
-  return mixinsTo.map(([ name, percent ]) => getFormula("mixTo")(name, percent)).join(";")
+  return mixinsTo.map(([ name, percent ]) => GD.formulas.mixTo(name, percent)).join(";")
 }
