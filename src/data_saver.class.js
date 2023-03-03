@@ -60,7 +60,7 @@ class DataSaver {
       var heapSheet = GD.AS.getSheetByName(heapName)
       var counts = heapSheet.getRange(2, 2, 7, 1).getValues()
       var tickers = F_COUNT_TICKERS(name)
-      var result = [[`${heapName} ${this.dateRange}`], ...counts, ...tickers].filter((array) => array[0])
+      var result = [[`${heapName} ${this.dateRange}`], ...counts, ...tickers].filter((array) => array.at(-1))
       var saveCountsSheet = GD.sheets.saveCountsSheet
       var rowAfterLastRow = saveCountsSheet.getLastRow() + 1
       saveCountsSheet.insertRowsAfter(rowAfterLastRow, result.length)
