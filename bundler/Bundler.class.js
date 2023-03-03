@@ -1,22 +1,19 @@
 {
   class Bundler {
-    constructor() {
-      this.createProjectBundle()
-    }
+    constructor() {this.createProjectBundle()}
 
     FS = require("fs")
     FOLDER = "src"
     FILE_NAMES_SEQUENCE = [
       "global_definitions",
-      "selectors",
       "sheet_config.class",
       "sheet_creator.class",
       "sheets_configs.config",
       "init_sheets.functions",
       "custom_user.functions",
       "data_saver.class",
-      "save_data.functions",
       "utilities",
+      "event_functions",
       "ui.functions"
     ]
     BUNDLE_NAME = "application.js"
@@ -26,11 +23,9 @@
     createProjectBundle() {
       for (const fileName of this.FILE_NAMES_SEQUENCE) {
         this.bundle.push(`// ${fileName}.js`)
-        const fileContent = this.getFileContent(fileName)
-        const stringsOfContent = fileContent.split("\n")
-        for (const string of stringsOfContent)
-          if (string) this.bundle.push(string)
-        this.bundle.push("")
+        const content = this.getFileContent(fileName)
+        const strings = content.split("\n")
+        this.bundle = [...this.bundle, ...strings, ""]
       }
       this.saveBundle()
     }

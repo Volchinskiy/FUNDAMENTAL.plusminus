@@ -5,11 +5,10 @@
  */
 class SheetCreator {
   constructor() {
-    this.AS = getAS()
+    this.AS = GD.AS
     this.sheet = null
     this.config = null
   }
-
   create(sheetConfig) {
     this.config = sheetConfig
     this.createSheet()
@@ -21,34 +20,30 @@ class SheetCreator {
     this.setFormulas()
     this.setHorizontalAlignments()
     this.setFontStyles()
+    this.setFontColors()
+    this.setDataValidations()
     return this.sheet
   }
-
   createSheet() {
     var {
       name, rows, columns,
       deletable, tabColor, fontFamily,
       verticalAlignment, horizontalAlignment
     } = this.config.general
-
     var possibleExistingSheet = this.AS.getSheetByName(name)
     if (possibleExistingSheet) {
       if (!deletable) throw new Error(`NAME: ${name}.\nSHEET EXISTS AND IT'S NOT DELETABLE.`)
       this.AS.deleteSheet(possibleExistingSheet)
       console.log("DELETE PREVIOUS SHEET")
     }
-
     var sheet = this.AS.insertSheet(name)
     this.sheet = sheet
     sheet.setTabColor(tabColor)
-
     // need add situation if we want to create more than 1000 rows or 26 cells
     var defaultRows = sheet.getMaxRows()
     var defaultCells = sheet.getMaxColumns()
-
     if (rows < defaultRows) sheet.deleteRows(1, defaultRows - rows)
     if (columns < defaultCells) sheet.deleteColumns(1, defaultCells - columns)
-
     var allCells = sheet.getRange(1, 1, rows, columns)
     allCells.setHorizontalAlignment(horizontalAlignment)
     allCells.setVerticalAlignment(verticalAlignment)
@@ -101,5 +96,17 @@ class SheetCreator {
     if (fontStyles)
       for (var { range } of fontStyles)
         this.sheet.getRange(...range).setFontStyle("italic")
+  }
+  setFontColors() {
+    var { fontColors } = this.config
+    if (fontColors)
+      for (var { range, value } of fontColors)
+        this.sheet.getRange(...range).setFontColor(value)
+  }
+  setDataValidations() {
+    var { dataValidations } = this.config
+    if (dataValidations)
+      for (var { range, rule } of dataValidations )
+        this.sheet.getRange(...range).setDataValidation(rule)
   }
 }
