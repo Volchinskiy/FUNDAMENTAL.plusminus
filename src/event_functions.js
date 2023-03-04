@@ -3,5 +3,5 @@
  */
 function onOpen() {
   initUiMenu()
-  GD.AS.setName("FUNDAMENTAL.plus_minus_v7")
+  GD.AS.setName("FUNDAMENTAL.plusminus_v7")
 }
