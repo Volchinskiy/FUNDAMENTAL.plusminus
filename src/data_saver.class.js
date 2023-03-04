@@ -12,14 +12,14 @@ class DataSaver {
     this.save()
   }
   save () {
-    this.defineDate()
+    this.defineDateRange()
     this.saveOperations()
     this.saveSortedOperations()
     this.saveCounts()
     this.setInitValues()
     this.clearEntryPointSheet()
   }
-  defineDate() {
+  defineDateRange() {
     var infoCell = GD.sheets.entryPointSheet.getRange(3, 4).getValue()
     var regexDate = new RegExp('\\d\\d.\\d\\d.\\d\\d\\d\\d') // date string look like 12.12.2032
     var firstDate = regexDate.exec(infoCell)
