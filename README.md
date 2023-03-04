@@ -1,4 +1,4 @@
-# FUNDAMENTAL.plus_minus_v5
+# FUNDAMENTAL.plusminus
 
 ## Application that help you count your finance that basis on Google Sheets!
 
