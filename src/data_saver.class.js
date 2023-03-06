@@ -42,7 +42,7 @@ class DataSaver {
       var [ name ] = this.initData[i]
       var heapName = GD.sheetNames.getHeapName(name)
       var heapSheet = GD.AS.getSheetByName(heapName)
-      var getOperations = (column) => heapSheet.getRange(3, column, heapSheet.getLastRow() - GD.contentPaddingTop, 3).getValues().filter((row) => row[0])
+      var getOperations = (column) => heapSheet.getRange(3, column, heapSheet.getLastRow() - GD.contentPaddingTop, 3).getValues().filter((row) => row[1])
       var plusOperations = getOperations(4)
       var minusOperations = getOperations(8)
       var operations = [...plusOperations, ...minusOperations]
@@ -60,7 +60,7 @@ class DataSaver {
       var heapSheet = GD.AS.getSheetByName(heapName)
       var counts = heapSheet.getRange(2, 2, 7, 1).getValues()
       var tickers = F_COUNT_TICKERS(name)
-      var result = [[`${heapName} ${this.dateRange}`], ...counts, ...tickers].filter((array) => array[1])
+      var result = [[`${heapName} ${this.dateRange}`], ...counts, ...tickers].filter((array) => array[0])
       var saveCountsSheet = GD.sheets.saveCountsSheet
       var rowAfterLastRow = saveCountsSheet.getLastRow() + 1
       saveCountsSheet.insertRowsAfter(rowAfterLastRow, result.length)
