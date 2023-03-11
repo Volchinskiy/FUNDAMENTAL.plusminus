@@ -1,4 +1,11 @@
+# dep
+/node_modules
+
+# security
+.env
+
 # temporary files
+yarn.lock
 
 # bundle
 application.js

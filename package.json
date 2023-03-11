@@ -1,11 +1,19 @@
 {
   "name": "fundamental.plusminus",
+  "scripts": {
+    "bundle": "node ./bundler/Bundler.class.js",
+    "bot": "node ./src/telegram_bot/app.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.2.0",
+    "node-telegram-bot-api": "^0.61.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3"
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "bundle": "node ./bundler/Bundler.class.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Volchinskiy/FUNDAMENTAL.plusminus.git"
