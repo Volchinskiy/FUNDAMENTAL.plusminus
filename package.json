@@ -1,8 +1,8 @@
 {
   "name": "fundamental.plusminus",
   "scripts": {
-    "bundle": "node ./bundler/Bundler.class.js",
-    "bot": "node ./src/telegram_bot/app.js"
+    "bundle": "node ./bundler/bundler.class.js",
+    "bot": "node ./src/telegram_bot/telegram_bot_manager.class.js"
   },
   "dependencies": {
     "mysql2": "^3.2.0",
