@@ -10,6 +10,7 @@ class TelegramBotManager extends DataBase {
     void this.onMessage()
   }
 
+  // TODO (developer) - why error: [polling_error] {} when user send messages if bot off?
   BOT = new TelegramApi(process.env.TELEGRAM_BOT_TOKEN, { polling: true })
   users = null
 
@@ -25,7 +26,7 @@ class TelegramBotManager extends DataBase {
         const operation = text.split(",") // insert operation
         if (operation.length === 3) {
           const { id: userId } = user
-          const preparedOperation = this.prepareOperation(operation, userId)
+          const preparedOperation = this.prepareOperationToInsert(operation, userId)
           void this.saveOperation(preparedOperation)
           void this.sendMessage(chatId, this.messages.success)
           return
@@ -41,6 +42,7 @@ class TelegramBotManager extends DataBase {
     const [ users ] = await this.getUsers()
     this.users = users
   }
+
   setUpBot() { void this.BOT.setMyCommands(this.commands) }
 
   findUser(fromId) {
@@ -48,12 +50,13 @@ class TelegramBotManager extends DataBase {
       if (user.telegramId === fromId) return user
   }
 
-  prepareOperation(operation, userId) {
+  prepareOperationToInsert(operation, userId) {
+    // TODO (developer) - need this.validateOperation()
+
     const [ value, tikers, information ] = operation
     return `${value},"${tikers.trim()}","${information.trim()}",${userId}`
   }
   async saveOperation(operation) { void await this.insertOperation(operation) }
-
 
   sendMessage(chatId, message) { void this.BOT.sendMessage(chatId, message) }
 }
