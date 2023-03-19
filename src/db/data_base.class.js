@@ -17,9 +17,13 @@ class DataBase extends Definitions {
     return (columns, values) => this.CONNECTION.query(`INSERT INTO ${tableName} (${columns}) VALUES (${values});`)
   }
 
+  getLastOperations(userId) {
+    return this.CONNECTION.query(`SELECT * FROM (SELECT * FROM Operations ORDER BY id DESC LIMIT 10) AS sub WHERE userId = ${userId} ORDER BY id ASC;`)
+  }
+
   insertOperation(values) {
     const query = this.insert('Operations')
-    const columns = ['value', 'tickers', 'information', 'userId'];
+    const columns = ['value','type','tickers','information','userId'];
     return query(columns, values)
   }
 }

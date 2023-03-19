@@ -10,14 +10,14 @@ CREATE TABLE Users (
 CREATE TABLE Tokens (
   id           INT           NOT NULL   AUTO_INCREMENT,
 	token				 VARCHAR(255)  NOT NULL,
-  userId      INT            NOT NULL,
+  userId       INT            NOT NULL,
   PRIMARY KEY (id),
   KEY (userId)
 );
 
 CREATE TABLE CountableEntities (
   id           INT           NOT NULL   AUTO_INCREMENT,
-  userId      INT            NOT NULL,
+  userId       INT            NOT NULL,
   name         VARCHAR(255)  NOT NULL,
 	init         INT					 NOT NULL   DEFAULT 0,
 	result			 INT           NOT NULL   DEFAULT 0,
@@ -32,7 +32,7 @@ CREATE TABLE Operations (
 	type         CHAR(1)       NOT NULL,
   tickers      VARCHAR(255)  NOT NULL,
   information  VARCHAR(255)  DEFAULT "",
-  userId      INT            NOT NULL,
+  userId       INT            NOT NULL,
   PRIMARY KEY (id),
   KEY (userId)
 );
