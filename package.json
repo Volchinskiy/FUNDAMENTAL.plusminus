@@ -3,7 +3,7 @@
   "scripts": {
     "bundle": "node ./bundler/bundler.class.js",
     "bot": "env-cmd node ./src/telegram_bot/entry_point.js",
-    "start": "env-cmd node ./src/telegram_bot/entry_point.js"
+    "start": "node ./src/telegram_bot/entry_point.js"
   },
   "dependencies": {
     "express": "^4.18.2",
