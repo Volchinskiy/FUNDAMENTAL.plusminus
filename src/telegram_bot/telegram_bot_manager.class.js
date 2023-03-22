@@ -1,47 +1,52 @@
-require("dotenv").config()
 const { DataBase } = require("../db/data_base.class")
-const TelegramApi = require("node-telegram-bot-api")
 const { log } = require("./../helpers/styled_logs")
+const { Bot } = require("grammy");
 
 class TelegramBotManager extends DataBase {
   constructor () {
     super()
     void this.setUsers()
-    void this.setUpBot()
+    void this.onCommands()
     void this.onMessage()
+    void this.setUpBot()
   }
 
-  BOT = new TelegramApi(process.env.TELEGRAM_BOT_TOKEN, { polling: true })
+  BOT = new Bot(process.env.TELEGRAM_BOT_TOKEN)
   users = null
 
   onMessage() {
-    this.BOT.on("message", async (message) => {
-      const { text, from: { id: fromId }, chat: { id: chatId } } = message
-      const user = this.findUser(fromId)
-      if (user) {
-        const { id: userId } = user
-
-        if (text === this.commands[0].command) {
-          const [ operations ] = await this.getLastOperations(userId)
-          const preparedOperations = this.prepareOperations(operations)
-          void this.sendMessage(chatId, preparedOperations.join("\n"))
-          return
-        }
-
+    this.BOT.on(
+      "message",
+      (context) => this.loginRequired(context, async (user, { message }) => {
+        const { text, chat: { id: chatId } } = message
         const operation = text.split(",").map((value) => value.trim())
         const isValid = this.validateOperation(operation)
         if (isValid) {
-          const preparedOperation = this.prepareToInsert(operation, userId)
+          const preparedOperation = this.prepareToInsert(operation, user.id)
           void this.insertOperation(preparedOperation)
           void this.sendMessage(chatId, this.messages.success)
           log(this.messages.success, preparedOperation)
-          return
         }
-        void this.sendMessage(chatId, this.messages.invalidData)
-        return
-      }
-      void this.sendMessage(chatId, this.messages.noLogin)
-    })
+        else void this.sendMessage(chatId, this.messages.invalidData)
+      })
+    )
+  }
+
+  onCommands() {
+    this.BOT.command(
+      this.commands[0].command.substring(1),
+      (context) => this.loginRequired(context, async (user, { chat }) => {
+        const [ operations ] = await this.getLastOperations(user.id)
+        const preparedOperations = this.prepareOperations(operations)
+        void this.sendMessage(chat.id, preparedOperations)
+      })
+    )
+  }
+
+  loginRequired(context, cd) {
+    const user = this.findUser(context.from.id)
+    if (user) cd(user, context)
+    else this.sendMessage(context.chat.id, this.messages.noLogin)
   }
 
   async setUsers() {
@@ -49,7 +54,9 @@ class TelegramBotManager extends DataBase {
     this.users = users
   }
 
-  setUpBot() { void this.BOT.setMyCommands(this.commands) }
+  async setUpBot() {
+    void await this.BOT.api.setMyCommands(this.commands)
+  }
 
   findUser(fromId) {
     try {
@@ -58,7 +65,7 @@ class TelegramBotManager extends DataBase {
     } catch { return null }
   }
 
-  prepareToInsert(operation, userId) {
+  prepareToInsert(operation, userId) { // TODO (developer) - change bad naming and rewrite type extracting
     var [ value, tickers, information ] = operation
     var type
     const tickersArray = tickers.split(" ")
@@ -83,14 +90,16 @@ class TelegramBotManager extends DataBase {
     return true
   }
 
-  prepareOperations(operations) {
+  prepareOperations(operations) { // TODO (developer) - change bad naming
     return operations.map((operation) => {
       const { value, type, tickers, information } = operation
-      return `${value} ${type} ${tickers} ${information}`
-    })
+      return `${value}, ${type} ${tickers}, ${information}`
+    }).join("\n")
   }
 
-  sendMessage(chatId, message) { void this.BOT.sendMessage(chatId, message) }
+  sendMessage(chatId, message) { void this.BOT.api.sendMessage(chatId, message) }
 }
 
-new TelegramBotManager()
+module.exports = {
+  telegramBotManager: new TelegramBotManager()
+}
