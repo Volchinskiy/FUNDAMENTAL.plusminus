@@ -2,6 +2,8 @@ const { DataBase } = require("../db/data_base.class")
 const { log } = require("./../helpers/styled_logs")
 const { Bot } = require("grammy");
 
+// TODO (developer) - rewrite methods that don't work with this. to functions
+
 class TelegramBotManager extends DataBase {
   constructor () {
     super()
@@ -17,7 +19,7 @@ class TelegramBotManager extends DataBase {
   onMessage() {
     this.BOT.on(
       "message",
-      (context) => this.loginRequired(context, async (user, { message }) => {
+      (context) => this.loginRequired(context, async ({ user, context: { message }}) => {
         const { text, chat: { id: chatId } } = message
         const operation = text.split(",").map((value) => value.trim())
         const isValid = this.validateOperation(operation)
@@ -35,7 +37,7 @@ class TelegramBotManager extends DataBase {
   onCommands() {
     this.BOT.command(
       this.commands[0].command.substring(1),
-      (context) => this.loginRequired(context, async (user, { chat }) => {
+      (context) => this.loginRequired(context, async ({ user, context: { chat } }) => {
         const [ operations ] = await this.getLastOperations(user.id)
         const preparedOperations = this.prepareOperations(operations)
         void this.sendMessage(chat.id, preparedOperations)
@@ -45,7 +47,7 @@ class TelegramBotManager extends DataBase {
 
   loginRequired(context, cd) {
     const user = this.findUser(context.from.id)
-    if (user) cd(user, context)
+    if (user) cd({ user, context })
     else this.sendMessage(context.chat.id, this.messages.noLogin)
   }
 

@@ -3,9 +3,9 @@ class Definitions {
     { command: '/last_ten', description: 'Type to see the last 10 operations.' },
   ]
   messages = {
-    success: '✅ [SUCCESS]',
-    invalidData: '❌ [ERROR]: Invalid data.',
-    noLogin: '❌ [ERROR]: You aren\'t login.',
+    success: '🟢 [SUCCESS]',
+    invalidData: '🔴 [ERROR]: Invalid data.',
+    noLogin: '🔴 [ERROR]: You aren\'t login.',
   }
   tickers = {
     plus: "p",

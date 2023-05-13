@@ -15,14 +15,14 @@
   },
   "version": "8.0.0",
   "description": "",
-  "main": "./src/telegram_bot/telegram_bot_manager.class.js",
+  "main": "./src/telegram_bot/entry_point.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Volchinskiy/FUNDAMENTAL.plusminus.git"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/Volchinskiy/FUNDAMENTAL.plusminus/issues"
   },
