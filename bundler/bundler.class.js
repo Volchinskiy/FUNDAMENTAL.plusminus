@@ -1,9 +1,9 @@
 {
   class Bundler {
-    constructor() {this.createProjectBundle()}
+    constructor() { this.createProjectBundle() }
 
     FS = require("fs")
-    FOLDER = "src"
+    FOLDER = "src/google_sheets_app"
     FILE_NAMES_SEQUENCE = [
       "global_definitions",
       "sheet_config.class",

@@ -1,18 +1,28 @@
 {
   "name": "fundamental.plusminus",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "bundle": "node ./bundler/Bundler.class.js"
+    "bundle": "node ./bundler/bundler.class.js",
+    "bot": "env-cmd node ./src/telegram_bot/entry_point.js",
+    "start": "node ./src/telegram_bot/entry_point.js"
   },
+  "dependencies": {
+    "express": "^4.18.2",
+    "grammy": "^1.15.3",
+    "mysql2": "^3.2.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
+  },
+  "version": "8.0.0",
+  "description": "",
+  "main": "./src/telegram_bot/entry_point.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Volchinskiy/FUNDAMENTAL.plusminus.git"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/Volchinskiy/FUNDAMENTAL.plusminus/issues"
   },
